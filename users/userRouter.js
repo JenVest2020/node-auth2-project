@@ -1,13 +1,19 @@
 const router = require('express').Router();
 const db = require('./usersModel');
+const restricted = require('../auth/restrictedMiddleware');
 
-router.get('/', (req, res) => {
+router.get('/', restricted, (req, res, next) => {
     db.getUsers()
         .then(response => {
-            res.status(200).json(response);
+            if (req.session) {
+                res.status(200).json(response);
+            } else {
+                next({ apiCode: 401, apiMessage: 'You shall not pass!' })
+            }
+
         })
         .catch(err => {
-            res.status(500).json({ message: 'error retrieving users' });
+            next({ apiCode: 500, apiMessage: 'error retrieving users', ...err });
         })
 })
 

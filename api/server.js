@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const errorHandler = require('../api/errorHandler');
 const session = require('express-session');
 const knexSessionStore = require('connect-session-knex')(session);
 
@@ -37,5 +38,7 @@ server.use(helmet());
 server.use(cors());
 server.use('/api/users', userRouter);
 server.use('/api/auth', authRouter);
+
+server.use(errorHandler);
 
 module.exports = server;
